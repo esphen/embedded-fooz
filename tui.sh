@@ -5,13 +5,30 @@
 
 DIR=$(dirname $0)
 FONT=$DIR/lib/doh.flf
+OLD_BLUE=0
+OLD_RED=0
 
 source $DIR/lib/simple_curses.sh
 
+function check_scores {
+  # Check if  scores changed
+  if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
+  then
+    play $DIR/lib/yay.ogg &> /dev/null &
+  fi
+}
+
+function set_scores {
+    OLD_RED=$RED_SCORE
+    OLD_BLUE=$BLUE_SCORE
+}
 
 main() {
   # Fetch RED_SCORE and BLUE_SCORE from score file
   source $DIR/score.txt
+
+  check_scores
+  set_scores
 
   window "Red Score" "red" "50%"
   append_command "figlet -cf $FONT $RED_SCORE"
