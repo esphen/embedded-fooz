@@ -1,12 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 # The display logic of the app
 # Dependencies: figlet
 
 DIR=$(dirname $0)
 FONT=$DIR/lib/doh.flf
-OLD_BLUE=0
-OLD_RED=0
+
+# Fetch scores in file
+source $DIR/score.txt
+OLD_RED=$RED_SCORE
+OLD_BLUE=$BLUE_SCORE
 
 source $DIR/lib/simple_curses.sh
 
