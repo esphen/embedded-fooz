@@ -9,25 +9,34 @@ echo
 
 # Reads input on pin $INPUT
 
-INPUT=0
-OUTPUT=1
-LAST_VAL=0
+DIR=$(dirname $0)
+INPUT=1
+OUTPUT=0
+LAST_VALUE=1
+
+function set_score {
+	sed score.txt -i $DIR/score.txt -e "s/\($1.*\)[0-9]/\1$2/"
+}
+
+function get_scores {
+	source $DIR/score.txt
+}
 
 while true
 do
   VALUE=$(gpio read $INPUT)
-  gpio write $OUTPUT $VALUE
+  #gpio write $OUTPUT $VALUE
 
   # If signal input has changed
-  if [ $LAST_VALUE -ne $VALUE ]
+  if [[ $LAST_VALUE -ne $VALUE ]]
   then
-    if [ $VALUE -eq 1 ]
+    if [[ $VALUE -eq 1 ]]
     then
-      echo 'Input is detected'
-    else
-      echo 'Input signal no longer detected'
+      get_scores
+      set_score BLUE $(($BLUE_SCORE + 1))
+      echo "Input is set to $(($BLUE_SCORE + 1))"
     fi
-    LAST=$VALUE
+    LAST_VALUE=$VALUE
   fi
 done
 
