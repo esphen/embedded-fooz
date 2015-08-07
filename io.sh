@@ -15,7 +15,7 @@ function check_input {
     then
       get_scores
       set_score BLUE $(($BLUE_SCORE + 1))
-      echo "Input is set to $(($BLUE_SCORE + 1))"
+      main_log "Input is set to $(($BLUE_SCORE + 1))"
     fi
     LAST_VALUE=$VALUE
   fi

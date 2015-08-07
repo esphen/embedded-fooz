@@ -8,6 +8,7 @@ source $(dirname $0)/variables.sh
 
 # Fetch gpio logic
 source $DIR/io.sh
+source $DIR/functions.sh
 
 source $DIR/lib/simple_curses.sh
 
@@ -18,7 +19,7 @@ function check_scores {
   # Check if  scores changed
   if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
-    play $DIR/lib/yay.ogg 1> /dev/null 2>> $ERRORLOG &
+    play $DIR/lib/yay.ogg 1> /dev/null 2>> $ERROR_LOGFILE &
   fi
 }
 
@@ -30,7 +31,7 @@ function set_old_scores {
 # Preload scores
 set_old_scores
 
-main() {
+function main {
   check_input
   get_scores
 
@@ -49,8 +50,39 @@ main() {
   endwin
 }
 
-# Start bashsimplecurses main loop
-main_loop 0.5
+function redraw {
+  POSX=0
+  POSY=0
+  tput cup 0 0 >> $BUFFER
+  tput il $(tput lines) >> $BUFFER
+  main >> $BUFFER 
+  tput cup $(tput lines) $(tput cols) >> $BUFFER 
+  refresh
+}
+
+function run {
+  local LAST_TIME=$(get_timestamp)
+  term_init
+  init_chars
+
+  # Run main loop
+  while [[ 1 ]]
+  do
+    # Is user pressing button? Update score file if so
+    check_input
+
+    # Update screen sometimes
+    if [[ $(($LAST_TIME + $REDRAW_TIME)) -lt $(get_timestamp) ]]
+    then
+      debug_log "Redraw at $(get_timestamp)"
+      redraw
+      LAST_TIME=$(get_timestamp)
+      debug_log "Redraw complete at $LAST_TIME"
+    fi
+  done
+}
+
+run
 
 exit 0
 
