@@ -1,43 +1,56 @@
-#! /bin/bash
-echo
-echo ' _____ ___  ____   ___  _
-|_   _/ _ \|  _ \ / _ \| |
-  | || | | | | | | | | | |
-  | || |_| | |_| | |_| |_|
-  |_| \___/|____/ \___/(_)'
-echo
+#!/bin/bash
 
-# Reads input on pin $INPUT
+# The display logic of the app
+# Dependencies: figlet
 
-DIR=$(dirname $0)
-INPUT=1
-OUTPUT=0
-LAST_VALUE=1
+# Fetch globals
+source $(dirname $0)/variables.sh
 
-function set_score {
-	sed score.txt -i $DIR/score.txt -e "s/\($1.*\)[0-9]/\1$2/"
-}
+# Fetch gpio logic
+source $DIR/io.sh
 
-function get_scores {
-	source $DIR/score.txt
-}
+source $DIR/lib/simple_curses.sh
 
-while true
-do
-  VALUE=$(gpio read $INPUT)
-  #gpio write $OUTPUT $VALUE
+# Fetch scores in file
+get_scores
 
-  # If signal input has changed
-  if [[ $LAST_VALUE -ne $VALUE ]]
+function check_scores {
+  # Check if  scores changed
+  if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
-    if [[ $VALUE -eq 1 ]]
-    then
-      get_scores
-      set_score BLUE $(($BLUE_SCORE + 1))
-      echo "Input is set to $(($BLUE_SCORE + 1))"
-    fi
-    LAST_VALUE=$VALUE
+    play $DIR/lib/yay.ogg 1> /dev/null 2>> $ERRORLOG &
   fi
-done
+}
+
+function set_old_scores {
+    OLD_RED=$RED_SCORE
+    OLD_BLUE=$BLUE_SCORE
+}
+
+# Preload scores
+set_old_scores
+
+main() {
+  check_input
+  get_scores
+
+  check_scores
+  set_old_scores
+
+  window "Red Score" "red" "50%"
+  append_command "figlet -cf $FONT $RED_SCORE"
+  endwin
+
+  col_right
+  move_up
+
+  window "Blue Score" "blue" "50%"
+  append_command "figlet -cf $FONT $BLUE_SCORE"
+  endwin
+}
+
+# Start bashsimplecurses main loop
+main_loop 0.5
 
 exit 0
+
