@@ -10,10 +10,6 @@ declare -r DEFAULT_PIN_IN=1
 declare -r NC='\033[0m' # No colour
 declare -r RED='\033[0;31m'
 
-# Globals
-# How often we redraw in sec
-REDRAW_TIME=4
-
 # Getters and setters (of globals)
 function get_scores {
   source $DIR/score.txt
