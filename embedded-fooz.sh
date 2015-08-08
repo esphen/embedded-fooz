@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# The display logic of the app
-# Dependencies: figlet
+# The display logic and main executable of the app
+# Dependencies: figlet and play (from VLC?)
 
 # Fetch globals
 source $(dirname $0)/variables.sh
@@ -19,7 +19,7 @@ function check_scores {
   # Check if  scores changed
   if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
-    play $DIR/lib/yay.ogg 1> /dev/null 2>> $ERROR_LOGFILE &
+    play $DIR/lib/yay.ogg 2>&1 > /dev/null | do_log ERROR $ERROR_LOGFILE "$RED" $
   fi
 }
 
@@ -32,7 +32,6 @@ function set_old_scores {
 set_old_scores
 
 function main {
-  check_input
   get_scores
 
   check_scores
@@ -69,15 +68,16 @@ function run {
   while [[ 1 ]]
   do
     # Is user pressing button? Update score file if so
-    check_input
+    check_input BLUE $BLUE_SCORE
 
     # Update screen sometimes
     if [[ $(($LAST_TIME + $REDRAW_TIME)) -lt $(get_timestamp) ]]
     then
-      debug_log "Redraw at $(get_timestamp)"
+      error_log "Test error"
+      debug_log "Redraw starting"
       redraw
       LAST_TIME=$(get_timestamp)
-      debug_log "Redraw complete at $LAST_TIME"
+      debug_log "Redraw complete"
     fi
   done
 }

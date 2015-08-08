@@ -2,6 +2,9 @@
 
 LAST_VALUE=1
 
+# Checks if input is detected and updates score file
+# $1 is team (BLUE/RED)
+# $2 is team score ($BLUE_SCORE, $RED_SCORE)
 function check_input {
   local INPUT=1
   local OUTPUT=0
@@ -13,9 +16,8 @@ function check_input {
   then
     if [[ $VALUE -eq 1 ]]
     then
-      get_scores
-      set_score BLUE $(($BLUE_SCORE + 1))
-      main_log "Input is set to $(($BLUE_SCORE + 1))"
+      set_score $1 $(($2 + 1))
+      main_log "Input is set to $(($2 + 1))"
     fi
     LAST_VALUE=$VALUE
   fi
