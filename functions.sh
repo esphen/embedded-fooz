@@ -17,31 +17,37 @@ function format_log {
 # $1 - The type of log this is (ERROR, LOG)
 # $2 - The logfile to write to
 # $3 - An escape character squence of a colour
-# $4 - If not using stdin - the text to be written
+# $4 - The text to be written
 function do_log {
-  if [ -n "$4" ]
-  then
-    IN="$4"
-  else
-    debug_log "Detected stdin"
-    read IN
-  fi
-
-  echo -e $(format_log $1 "$IN" $3) >> $2
+  echo -e $(format_log $1 "$4" $3) >> $2
 }
 
+function get_input {
+  if [ -n "$1" ]
+  then
+    IN="$1"
+  else
+    read IN
+  fi
+}
 function debug_log {
-  do_log DEBUG $DEBUG_LOGFILE "$NC" "$1"
+  get_input "$1"
+
+  do_log DEBUG $DEBUG_LOGFILE "$NC" "$IN"
 }
 
 function main_log {
-  do_log LOG $DEBUG_LOGFILE "$NC" "$1"
-  do_log LOG $MAIN_LOGFILE "$NC" "$1"
+  get_input "$1"
+
+  do_log LOG $DEBUG_LOGFILE "$NC" "$IN"
+  do_log LOG $MAIN_LOGFILE "$NC" "$IN"
 }
 
 function error_log {
-  do_log ERROR $DEBUG_LOGFILE "$RED" "$1"
-  do_log ERROR $MAIN_LOGFILE "$RED" "$1"
-  do_log ERROR $ERROR_LOGFILE "$RED" "$1"
+  get_input "$1"
+
+  do_log ERROR $DEBUG_LOGFILE "$RED" "$IN"
+  do_log ERROR $MAIN_LOGFILE "$RED" "$IN"
+  do_log ERROR $ERROR_LOGFILE "$RED" "$IN"
 }
 

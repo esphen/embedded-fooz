@@ -19,7 +19,7 @@ function check_scores {
   # Check if  scores changed
   if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
-    play $DIR/lib/yay.ogg 2>&1 > /dev/null | do_log ERROR $ERROR_LOGFILE "$RED" $
+    play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
   fi
 }
 
