@@ -5,9 +5,9 @@ LAST_VALUE=1
 # Checks if input is detected and updates score file
 # $1 is team (BLUE/RED)
 # $2 is team score ($BLUE_SCORE, $RED_SCORE)
+# $3 is data input pin (Using wiringPi pin numbers)
 function check_input {
-  local INPUT=1
-  local OUTPUT=0
+  local INPUT=${3:-${DEFAULT_PIN_IN}}
   local VALUE=$(gpio read $INPUT)
 
   # If signal input has changed

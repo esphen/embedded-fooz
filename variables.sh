@@ -4,6 +4,7 @@ declare -r MAIN_LOGFILE=$DIR/logs/main.log
 declare -r DEBUG_LOGFILE=$DIR/logs/debug.log
 declare -r ERROR_LOGFILE=$DIR/logs/error.log
 declare -r FONT=$DIR/lib/doh.flf
+declare -r DEFAULT_PIN_IN=1
 
 # Colours
 declare -r NC='\033[0m' # No colour
