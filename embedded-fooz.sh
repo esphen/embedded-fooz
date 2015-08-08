@@ -19,6 +19,7 @@ function check_scores {
   # Check if  scores changed
   if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
+    # Discard stdout and redirect stderr to error_log
     play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
   fi
 }
@@ -73,7 +74,6 @@ function run {
     # Update screen sometimes
     if [[ $(($LAST_TIME + $REDRAW_TIME)) -lt $(get_timestamp) ]]
     then
-      error_log "Test error"
       debug_log "Redraw starting"
       redraw
       LAST_TIME=$(get_timestamp)
