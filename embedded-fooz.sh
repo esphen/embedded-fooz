@@ -15,12 +15,15 @@ source $DIR/lib/simple_curses.sh
 # Fetch scores in file
 get_scores
 
-function check_scores {
-  # Check if  scores changed
+function check_scores_changed {
+
+  # Play cheer if score changed
   if [ $RED_SCORE -gt $OLD_RED -o $BLUE_SCORE -gt $OLD_BLUE ]
   then
     # Discard stdout and redirect stderr to error_log
     play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
+
+    set_old_scores
   fi
 }
 
@@ -35,21 +38,26 @@ set_old_scores
 function main {
   get_scores
 
-  check_scores
-  set_old_scores
+  check_scores_changed
+
+  # TODO: append_command is very slow (2 blocking sec each)
+  # Not figlet's fault; bashsimplecurses' implementation?
 
   window "Red Score" "red" "50%"
-  append_command "figlet -cf $FONT $RED_SCORE"
+  append $RED_SCORE
+  #append_command "figlet -cf $FONT $RED_SCORE"
   endwin
 
   col_right
   move_up
 
   window "Blue Score" "blue" "50%"
-  append_command "figlet -cf $FONT $BLUE_SCORE"
+  append $BLUE_SCORE
+  #append_command "figlet -cf $FONT $BLUE_SCORE"
   endwin
 }
 
+# Redraw the screen
 function redraw {
   POSX=0
   POSY=0

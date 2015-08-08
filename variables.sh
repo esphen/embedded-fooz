@@ -11,7 +11,7 @@ declare -r RED='\033[0;31m'
 
 # Globals
 # How often we redraw in sec
-REDRAW_TIME=1
+REDRAW_TIME=4
 
 # Getters and setters (of globals)
 function get_scores {
