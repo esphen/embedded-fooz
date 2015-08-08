@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The display logic and main executable of the app
-# Dependencies: figlet and play (from VLC?)
+# Dependencies: figlet, wiringPi and play (from VLC?)
 
 # Fetch globals
 source $(dirname $0)/variables.sh
@@ -35,7 +35,17 @@ function set_old_scores {
 # Preload scores
 set_old_scores
 
+# Continously checks io for input
+function start_io_loop {
+  while [[ 1 ]]
+  do
+    # TODO: Support two players
+    check_input BLUE $BLUE_SCORE
+  done
+}
+
 function main {
+  debug_log "Redraw starting"
   get_scores
 
   check_scores_changed
@@ -44,53 +54,25 @@ function main {
   # Not figlet's fault; bashsimplecurses' implementation?
 
   window "Red Score" "red" "50%"
-  append $RED_SCORE
-  #append_command "figlet -cf $FONT $RED_SCORE"
+  append_command "figlet -cf $FONT $RED_SCORE"
   endwin
 
   col_right
   move_up
 
   window "Blue Score" "blue" "50%"
-  append $BLUE_SCORE
-  #append_command "figlet -cf $FONT $BLUE_SCORE"
+  append_command "figlet -cf $FONT $BLUE_SCORE"
   endwin
+  debug_log "Redraw complete"
 }
 
-# Redraw the screen
-function redraw {
-  POSX=0
-  POSY=0
-  tput cup 0 0 >> $BUFFER
-  tput il $(tput lines) >> $BUFFER
-  main >> $BUFFER 
-  tput cup $(tput lines) $(tput cols) >> $BUFFER 
-  refresh
-}
+# IO loop in background so it is not blocked
+start_io_loop &
+IO_PROCESS=$!
+trap cleanup EXIT
 
-function run {
-  local LAST_TIME=$(get_timestamp)
-  term_init
-  init_chars
-
-  # Run main loop
-  while [[ 1 ]]
-  do
-    # Is user pressing button? Update score file if so
-    check_input BLUE $BLUE_SCORE
-
-    # Update screen sometimes
-    if [[ $(($LAST_TIME + $REDRAW_TIME)) -lt $(get_timestamp) ]]
-    then
-      debug_log "Redraw starting"
-      redraw
-      LAST_TIME=$(get_timestamp)
-      debug_log "Redraw complete"
-    fi
-  done
-}
-
-run
+# Start main loop and run every X sec
+main_loop 0.5
 
 exit 0
 

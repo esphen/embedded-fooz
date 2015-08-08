@@ -57,3 +57,11 @@ function error_log {
   do_log ERROR $ERROR_LOGFILE "$RED" "$INPUT"
 }
 
+# Cleanup other processes on exit
+function cleanup {
+  main_log "Cleanup happening - killing io process"
+  kill $IO_PROCESS |& main_log
+
+  echo -e "BLUE_SCORE=0\nRED_SCORE=0" > $DIR/score.txt
+}
+
