@@ -8,7 +8,7 @@ LAST_VALUE=1
 # $3 is data input pin (Using wiringPi pin numbers)
 function check_input {
   local INPUT=${3:-${DEFAULT_PIN_IN}}
-  local VALUE=$(gpio read $INPUT)
+  local VALUE=$(gpio read $INPUT 2> >(error_log))
 
   # If signal input has changed
   if [[ $LAST_VALUE -ne $VALUE ]]
