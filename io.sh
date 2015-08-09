@@ -15,8 +15,18 @@ function check_input {
   then
     if [[ $VALUE -eq 1 ]]
     then
-      set_score $1 $(($2 + 1))
-      main_log "$1 player is set to $(($2 + 1))"
+      local NEW_SCORE=$(($2 + 1))
+      set_score $1 $NEW_SCORE
+      main_log "$1 player is set to $NEW_SCORE"
+
+      play_cheer
+
+      if [[ $NEW_SCORE -eq $WIN_SCORE ]]
+      then
+        # TODO: Do something cool when winner is detected
+        main_log "Game over! $1 player is the winner!"
+        reset_scores
+      fi
     fi
     LAST_VALUE=$VALUE
   fi

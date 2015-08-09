@@ -57,6 +57,12 @@ function error_log {
   do_log ERROR $ERROR_LOGFILE "$RED" "$INPUT"
 }
 
+# Play a cheerful tune!
+# Also send error log to error_log and discard stout
+function play_cheer {
+    play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
+}
+
 function reset_scores {
   main_log "Resetting scores"
   echo -e "BLUE_SCORE=0\nRED_SCORE=0" > $DIR/score.txt
