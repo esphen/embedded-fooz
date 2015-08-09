@@ -5,12 +5,11 @@
 
 # Fetch globals
 source $(dirname $0)/variables.sh
+source $DIR/functions.sh
+source $DIR/lib/simple_curses.sh
 
 # Fetch gpio logic
 source $DIR/io.sh
-source $DIR/functions.sh
-
-source $DIR/lib/simple_curses.sh
 
 # Fetch scores in file
 get_scores
