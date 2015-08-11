@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The display logic and main executable of the app
-# Dependencies: figlet, wiringPi and play (from VLC?)
+# Dependencies: figlet, wiringPi and play (from SoX)
 
 # Fetch globals
 source $(dirname $0)/variables.sh
