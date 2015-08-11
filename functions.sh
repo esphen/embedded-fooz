@@ -1,8 +1,4 @@
-# Generic functions
-
-function get_timestamp {
-  echo $(date +%s)
-}
+# Generic and global functions
 
 # Formats a string to the default log format
 # $1 - The type of log this is (ERROR, LOG)
@@ -12,11 +8,18 @@ function format_log {
   echo "$3[ $1: $(date) ] $2 $NC"
 }
 
+# The main log function. Logs to logs folder,
+# which is created if it does not exist.
 # $1 - The type of log this is (ERROR, LOG)
 # $2 - The logfile to write to
 # $3 - An escape character squence of a colour
 # $4 - The text to be written
 function do_log {
+  if [ ! -d $LOGDIR ]
+  then
+    mkdir -v $LOGDIR |& main_log
+  fi
+
   echo -e $(format_log $1 "$4" $3) >> $2
 }
 
@@ -57,9 +60,29 @@ function error_log {
   do_log ERROR $ERROR_LOGFILE "$RED" "$INPUT"
 }
 
+# Play a cheerful tune!
+# Also send error log to error_log and discard stout
+function play_cheer {
+  debug_log "Playing cheer"
+  play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
+}
+
+# Get scores from scorefile
+function get_scores {
+  source $SCOREFILE
+}
+
+# $1 - The player in question (BLUE, RED)
+# $2 - The score to set (1-7)
+function set_score {
+  sed -i $SCOREFILE -e "s/\($1.*\)[0-9]/\1$2/"
+  get_scores
+}
+
 function reset_scores {
   main_log "Resetting scores"
-  echo -e "BLUE_SCORE=0\nRED_SCORE=0" > $DIR/score.txt
+  echo -e "BLUE_SCORE=0\nRED_SCORE=0" > $SCOREFILE
+  debug_log < $SCOREFILE
 }
 
 # Cleanup other processes on exit
