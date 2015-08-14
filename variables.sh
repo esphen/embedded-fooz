@@ -7,6 +7,8 @@ declare -r ERROR_LOGFILE=$LOGDIR/error.log
 declare -r SCOREFILE=$DIR/score.txt
 declare -r FONT=$DIR/lib/doh.flf
 declare -r DEFAULT_PIN_IN=1
+declare -r BLUE_PLAYER_PIN_IN=1
+declare -r RED_PLAYER_PIN_IN=0
 declare -r WIN_SCORE=7
 
 # Colours

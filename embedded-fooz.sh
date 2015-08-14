@@ -18,8 +18,9 @@ get_scores
 function start_io_loop {
   while [[ 1 ]]
   do
-    # TODO: Support two players
-    check_input BLUE $BLUE_SCORE
+    get_scores
+    LAST_BLUE_READ=$(check_input BLUE $BLUE_SCORE $LAST_BLUE_READ $BLUE_PLAYER_PIN_IN)
+    LAST_RED_READ=$(check_input RED $RED_SCORE $LAST_RED_READ $RED_PLAYER_PIN_IN)
   done
 }
 
@@ -27,7 +28,7 @@ function main {
   debug_log "Redraw starting"
   get_scores
 
-  # TODO: append_command is very slow (2 blocking sec each)
+  # TODO: append_command is very slow (2 sec each invocation)
   # Not figlet's fault; bashsimplecurses' implementation?
 
   window "Red Score" "red" "50%"
