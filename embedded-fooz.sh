@@ -1,34 +1,56 @@
-#! /bin/bash
-echo
-echo ' _____ ___  ____   ___  _
-|_   _/ _ \|  _ \ / _ \| |
-  | || | | | | | | | | | |
-  | || |_| | |_| | |_| |_|
-  |_| \___/|____/ \___/(_)'
-echo
+#!/bin/bash
 
-# Reads input on pin $INPUT
+# The display logic and main executable of the app
+# Dependencies: figlet, wiringPi and play (from SoX)
 
-INPUT=0
-OUTPUT=1
-LAST_VAL=0
+# Fetch globals
+source $(dirname $0)/variables.sh
+source $DIR/functions.sh
+source $DIR/lib/simple_curses.sh
 
-while true
-do
-  VALUE=$(gpio read $INPUT)
-  gpio write $OUTPUT $VALUE
+# Fetch gpio logic
+source $DIR/io.sh
 
-  # If signal input has changed
-  if [ $LAST_VALUE -ne $VALUE ]
-  then
-    if [ $VALUE -eq 1 ]
-    then
-      echo 'Input is detected'
-    else
-      echo 'Input signal no longer detected'
-    fi
-    LAST=$VALUE
-  fi
-done
+# Fetch scores in file
+get_scores
+
+# Continously checks io for input
+function start_io_loop {
+  while [[ 1 ]]
+  do
+    get_scores
+    LAST_BLUE_READ=$(check_input BLUE $BLUE_SCORE $LAST_BLUE_READ $BLUE_PLAYER_PIN_IN)
+    LAST_RED_READ=$(check_input RED $RED_SCORE $LAST_RED_READ $RED_PLAYER_PIN_IN)
+  done
+}
+
+function main {
+  debug_log "Redraw starting"
+  get_scores
+
+  # TODO: append_command is very slow (2 sec each invocation)
+  # Not figlet's fault; bashsimplecurses' implementation?
+
+  window "Red Score" "red" "50%"
+  append_command "figlet -cf $FONT $RED_SCORE"
+  endwin
+
+  col_right
+  move_up
+
+  window "Blue Score" "blue" "50%"
+  append_command "figlet -cf $FONT $BLUE_SCORE"
+  endwin
+  debug_log "Redraw complete"
+}
+
+# IO loop in background so it is not blocked
+start_io_loop &
+IO_PROCESS=$!
+trap cleanup EXIT
+
+# Start main loop and run every X sec
+main_loop 0.5
 
 exit 0
+
