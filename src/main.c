@@ -24,9 +24,12 @@ int main() {
     sleep(1);
   }
   endwin();
-  /*printf("Blue player: %i\n", readPlayerScore("BLUE"));
+
+  /*
+  printf("Blue player: %i\n", readPlayerScore("BLUE"));
   printf("Red player: %i\n", readPlayerScore("RED"));
-  printf("Teal player: %i\n", readPlayerScore("TEAL"));*/
+  printf("Teal player: %i\n", readPlayerScore("TEAL"));
+  */
 
   // If it gets this far, something is wrong with main loop
   return EXIT_FAILURE;
@@ -110,22 +113,24 @@ void drawScoreBox(int boxWidth, int x, int y, int score) {
   refresh();
 }
 
-int readPlayerScore(char * player) {
+int readPlayerScore(char *player) {
+
   int result = -1;
-  char p[20];
+  char p[25];
   int i = 0;
   int c;
 
   // Get dirname
   char cwd[1024];
-  if (getcwd(cwd, sizeof(cwd)) == NULL)
-      perror("getcwd() error");
-  strcat(cwd, "/score.txt");
+  if (getcwd(cwd, sizeof(cwd)) == NULL) {
+    perror("getcwd() error");
+  }
 
+  strcat(cwd, "/score.txt");
   FILE *fp = fopen(cwd, "r");
 
   if (fp == NULL) {
-    printf("An error occured while opening score file: %s\n", cwd);
+    fprintf(stderr, "An error occured while opening score file: %s\n", cwd);
   } else {
     // Read file
     while ((c = getc(fp)) != EOF) {
@@ -137,9 +142,9 @@ int readPlayerScore(char * player) {
 
   // Search for player in file
   // Separate by token \n
-  char * t1;
-  for ( t1 = strtok(p, "\n"); t1 != NULL; t1 = strtok(NULL, " ") ) {
-    char *substr = strstr(t1, player);
+  char * token;
+  for ( token = strtok(p, "\n"); token != NULL; token = strtok(NULL, "\n") ) {
+    char *substr = strstr(token, player);
 
     // If substr *player exists in token
     if (substr != NULL) {
@@ -150,6 +155,11 @@ int readPlayerScore(char * player) {
     }
   }
 
-  return result;
+  if (result == -1) {
+    fprintf(stderr, "Could not find score for %s\n", player);
+    return 0;
+  } else {
+    return result;
+  }
 }
 

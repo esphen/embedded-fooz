@@ -72,6 +72,23 @@ function get_scores {
   source $SCOREFILE
 }
 
+# The function called when a player is declared the winner
+# Changes application state to $STATE_WINNER for X seconds
+# $1 - The player in question (BLUE, RED)
+function enter_player_win_state {
+  main_log "Game over! $1 player is the winner!"
+  reset_scores
+
+  APPLICATION_STATE=$STATE_WINNER
+
+  debug_log "Sleeping for $WIN_STATE_SECONDS"
+  sleep $WIN_STATE_SECONDS
+
+  APPLICATION_STATE=$STATE_NORMAL
+
+  main_log "Game reset, application state is $APPLICATION_STATE, play can now resume"
+}
+
 # $1 - The player in question (BLUE, RED)
 # $2 - The score to set (1-7)
 function set_score {

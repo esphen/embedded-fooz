@@ -23,9 +23,7 @@ function check_input {
 
       if [[ $NEW_SCORE -ge $WIN_SCORE ]]
       then
-        # TODO: Do something cool when winner is detected
-        main_log "Game over! $1 player is the winner!"
-        reset_scores
+        enter_player_win_state $1
       fi
     fi
   fi

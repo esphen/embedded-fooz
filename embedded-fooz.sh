@@ -24,33 +24,13 @@ function start_io_loop {
   done
 }
 
-function main {
-  debug_log "Redraw starting"
-  get_scores
-
-  # TODO: append_command is very slow (2 sec each invocation)
-  # Not figlet's fault; bashsimplecurses' implementation?
-
-  window "Red Score" "red" "50%"
-  append_command "figlet -cf $FONT $RED_SCORE"
-  endwin
-
-  col_right
-  move_up
-
-  window "Blue Score" "blue" "50%"
-  append_command "figlet -cf $FONT $BLUE_SCORE"
-  endwin
-  debug_log "Redraw complete"
-}
-
-# IO loop in background so it is not blocked
+# IO loop in background so it is not blocked by UI
 start_io_loop &
 IO_PROCESS=$!
 trap cleanup EXIT
 
 # Start main loop and run every X sec
-main_loop 0.5
+$DIR/Curses 2> >(error_log)
 
 exit 0
 
