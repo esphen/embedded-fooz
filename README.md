@@ -4,6 +4,9 @@ The view is written in C and has the following requirements:
 ```
 cmake (>=3.0)
 libncurses5-dev (ncurses-devel on red hat)
+figlet
+wiringPi
+play (from SoX)
 ```
 
 To compile C view, run the following command in root folder.
