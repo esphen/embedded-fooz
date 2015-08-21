@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <unistd.h>
 
 const int NUMBER_WIDTH = 8;
@@ -18,42 +19,39 @@ int readPlayerScore(char*);
 
 int drawHeader(int boxWidth, const char *player, WINDOW *drawWindow);
 
-int main() {
+void termination_handler(int);
+
+void setup_sigint_handler();
+
+int main(int argc, int *argv[]) {
+  int sleep_time = 1;
+
+  setup_sigint_handler();
 
   setCursesConfig();
   while(1) {
     drawWindow();
-    sleep(0.5);
+    sleep(sleep_time);
   }
-  endwin();
-
-  /*
-  printf("Blue player: %i\n", readPlayerScore("BLUE"));
-  printf("Red player: %i\n", readPlayerScore("RED"));
-  printf("Teal player: %i\n", readPlayerScore("TEAL"));
-  */
 
   // If it gets this far, something is wrong with main loop
   return EXIT_FAILURE;
 }
 
-void get_figlet_digit(int score, char **output) {
+void setup_sigint_handler() {
+  struct sigaction new_action;
 
-  // Concat strings, run figlet and retrieve stream
-  // strcat
-  char command[23];
-  sprintf(command, "%s %i", "/usr/bin/figlet ", score);
-  FILE *stream = popen(command, "r");
-
-  char buffer[1024];
-  char *line_p;
-  int i = 0;
-  while ((line_p = fgets(buffer, sizeof(buffer), stream)) != '\0') {
-    output[i] = malloc(NUMBER_WIDTH);
-    strcpy(output[i++], line_p);
+  new_action.sa_handler = termination_handler;
+  new_action.sa_flags = 0;
+  sigemptyset(&new_action.sa_mask);
+  if (sigaction(SIGINT, &new_action, NULL) < 0) {
+    perror("Error setting SIGINT handler");
   }
-  output[i] = '\0';
-  pclose(stream);
+}
+
+void termination_handler(int signum) {
+  endwin();
+  exit(0);
 }
 
 void setCursesConfig() {
@@ -134,6 +132,25 @@ int drawHeader(int boxWidth, const char *player, WINDOW *drawWindow) {
 
   mvwhline(drawWindow, ++offset, 0, '-', boxWidth);
   return offset;
+}
+
+void get_figlet_digit(int score, char **output) {
+
+  // Concat strings, run figlet and retrieve stream
+  // strcat
+  char command[23];
+  sprintf(command, "%s %i", "/usr/bin/figlet ", score);
+  FILE *stream = popen(command, "r");
+
+  char buffer[1024];
+  char *line_p;
+  int i = 0;
+  while ((line_p = fgets(buffer, sizeof(buffer), stream)) != '\0') {
+    output[i] = malloc(NUMBER_WIDTH);
+    strcpy(output[i++], line_p);
+  }
+  output[i] = '\0';
+  pclose(stream);
 }
 
 int readPlayerScore(char *player) {
