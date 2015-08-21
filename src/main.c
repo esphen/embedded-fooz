@@ -12,16 +12,18 @@ void drawWindow();
 
 void setCursesConfig();
 
-void drawScoreBox(int, int, int, int);
+void drawScoreBox(int, int, int, int, char*);
 
 int readPlayerScore(char*);
+
+int drawHeader(int boxWidth, const char *player, WINDOW *drawWindow);
 
 int main() {
 
   setCursesConfig();
   while(1) {
     drawWindow();
-    sleep(1);
+    sleep(0.5);
   }
   endwin();
 
@@ -77,6 +79,8 @@ void setCursesConfig() {
 
 void drawWindow() {
 
+  erase();
+
   int endY = 0;
   int endX = 0;
 
@@ -84,14 +88,18 @@ void drawWindow() {
 
   int boxWidth = endX / 2;
 
-  drawScoreBox(boxWidth, 0, 0, readPlayerScore("BLUE"));
+  drawScoreBox(boxWidth, 0, 0, readPlayerScore("BLUE"), "BLUE");
 
-  drawScoreBox(boxWidth, endX / 2, 0, readPlayerScore("RED"));
+  drawScoreBox(boxWidth, endX / 2, 0, readPlayerScore("RED"), "RED");
+
+  move(0, 0);
+  refresh();
 }
 
-void drawScoreBox(int boxWidth, int x, int y, int score) {
+void drawScoreBox(int boxWidth, int x, int y, int score, char *player) {
 
   WINDOW* drawWindow = subwin(stdscr, 20, boxWidth, y, x);
+  int offset = drawHeader(boxWidth, player, drawWindow);
 
   // Get digit to draw in window
   char *asciiArt[NUMBER_HEIGHT];
@@ -101,16 +109,31 @@ void drawScoreBox(int boxWidth, int x, int y, int score) {
   char *string;
   while ((string = asciiArt[i++]) != '\0') {
     int xPos = (boxWidth / 2) - (NUMBER_WIDTH / 2);
-    wmove(drawWindow, i, xPos);
-
-    waddstr(drawWindow, string);
+    mvwaddstr(drawWindow, i + offset + 3, xPos, string);
     free(string);
   }
 
   wborder(drawWindow, '|', '|', '-', '-', '+', '+', '+', '+');
   touchwin(stdscr);
-  move(0, 0);
-  refresh();
+}
+
+int drawHeader(int boxWidth, const char *player, WINDOW *drawWindow) {
+  int offset = 2;
+  short int color_pair = 1;
+  start_color();
+
+  if (strcmp(player, "RED") == 0) {
+    init_pair(color_pair, COLOR_RED, COLOR_BLACK);
+  } else if (strcmp(player, "BLUE") == 0) {
+    init_pair(++color_pair, COLOR_BLUE, COLOR_BLACK);
+  }
+
+  wattron(drawWindow, COLOR_PAIR(color_pair));
+  mvwaddstr(drawWindow, offset++, boxWidth / 2 - (int) (strlen(player) / 2), player);
+  wattroff(drawWindow, COLOR_PAIR(color_pair));
+
+  mvwhline(drawWindow, ++offset, 0, '-', boxWidth);
+  return offset;
 }
 
 int readPlayerScore(char *player) {

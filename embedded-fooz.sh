@@ -29,7 +29,7 @@ start_io_loop &
 IO_PROCESS=$!
 trap cleanup EXIT
 
-# Start main loop and run every X sec
+# Start main loop
 $DIR/Curses 2> >(error_log)
 
 exit 0
