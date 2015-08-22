@@ -5,7 +5,7 @@
 #include "io.h"
 #include "constants.h"
 
-int readPlayerScore(char *player) {
+int read_player_score(char *player) {
 
   int result = -1;
   char p[25];

@@ -13,9 +13,9 @@ int main(int argc, int *argv[]) {
 
   setup_sigint_handler();
 
-  setCursesConfig();
+  set_curses_config();
   while(1) {
-    drawWindow();
+    draw_window();
     sleep(sleep_time);
   }
 
