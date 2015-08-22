@@ -3,6 +3,7 @@
 
 int readPlayerScore(char*);
 
-void get_figlet_digit(int, char **);
+void get_figlet_digit(char*, char **);
 
 #endif //CURSES_IO_H
+

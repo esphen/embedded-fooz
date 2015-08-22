@@ -7,8 +7,9 @@ void drawWindow();
 
 void setCursesConfig();
 
-void drawScoreBox(int, int, int, int, char*);
+void draw_box(int, int, int, int, char *, char *);
 
-int drawHeader(int boxWidth, const char *player, WINDOW *drawWindow);
+int drawHeader(int, const char *, WINDOW *);
 
 #endif //CURSES_CURSES_H
+

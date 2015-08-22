@@ -36,5 +36,6 @@ void setup_sigint_handler() {
 
 void termination_handler(int signum) {
   endwin();
-  exit(0);
+  exit(EXIT_SUCCESS);
 }
+
