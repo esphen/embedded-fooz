@@ -3,11 +3,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "io.h"
+#include "constants.h"
 
 int read_player_score(char *player) {
 
   int result = -1;
-  char p[25];
+  char p[NUMBER_HEIGHT];
   int i = 0;
   int c;
 
@@ -82,7 +83,7 @@ void get_figlet_digit(char *score, char **output, char *font) {
     char *line_p;
     int i = 0;
     while ((line_p = fgets(buffer, sizeof buffer, stream)) != '\0') {
-      output[i] = malloc(sizeof(char) * strlen(line_p));
+      output[i] = malloc(sizeof(char) * strlen(line_p) + 2);
       strcpy(output[i++], line_p);
     }
     output[i] = '\0';
