@@ -36,7 +36,7 @@ void draw_window() {
 
   // Draw logo
   int logo_height = 10;
-  draw_box(end_x, logo_height, 0, 0, "OMS SCOREBOARD", NULL);
+  draw_box(end_x, logo_height, 0, 0, "OMS SCOREBOARD", NULL, NULL);
 
   char *blue_score = malloc(sizeof(char));
   char *red_score = malloc(sizeof(char));
@@ -45,14 +45,14 @@ void draw_window() {
   sprintf(red_score, "%i", read_player_score("RED"));
 
   int box_width = end_x / 2;
-  draw_box(box_width, 15, 0, logo_height, blue_score, "BLUE");
-  draw_box(box_width, 15, end_x / 2, logo_height, red_score, "RED");
+  draw_box(box_width, 30, 0, logo_height, blue_score, "BLUE", "doh.flf");
+  draw_box(box_width, 30, end_x / 2, logo_height, red_score, "RED", "doh.flf");
 
   move(0, 0);
   refresh();
 }
 
-void draw_box(int width, int height, int x, int y, char *score, char *header) {
+void draw_box(int width, int height, int x, int y, char *score, char *header, char *font) {
 
   WINDOW *draw_window = subwin(stdscr, height, width, y, x);
 
@@ -63,7 +63,7 @@ void draw_box(int width, int height, int x, int y, char *score, char *header) {
 
   // Get digit to draw in window
   char *asciiArt[NUMBER_HEIGHT];
-  get_figlet_digit(score, asciiArt);
+  get_figlet_digit(score, asciiArt, font);
 
   // Print lines of ascii art
   if (asciiArt != NULL) {

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "io.h"
-#include "constants.h"
 
 int read_player_score(char *player) {
 
@@ -55,25 +54,35 @@ int read_player_score(char *player) {
   }
 }
 
-void get_figlet_digit(char *score, char **output) {
+void get_figlet_digit(char *score, char **output, char *font) {
 
   // Columns before line break
   int figlet_width = 100;
 
+  // Get dirname
+  char cwd[1024];
+  if (getcwd(cwd, sizeof(cwd)) == NULL) {
+    perror("getcwd() error");
+  }
+
   // Concat strings, run figlet and retrieve stream
   char command[1024];
-  sprintf(command, "%s %i %s", "/usr/bin/figlet -w", figlet_width, score);
+  if (font == NULL) {
+    sprintf(command, "%s %i %s", "/usr/bin/figlet -w", figlet_width, score);
+  } else {
+    sprintf(command, "%s %s%s %i %s", "/usr/bin/figlet -f", cwd, "/lib/doh.flf -w", figlet_width, score);
+  }
+
   FILE *stream = popen(command, "r");
 
   if (stream == NULL) {
     fprintf(stderr, "Failed to open process %s\n", command);
-    output = NULL;
   } else {
     char buffer[1024];
     char *line_p;
     int i = 0;
     while ((line_p = fgets(buffer, sizeof buffer, stream)) != '\0') {
-      output[i] = malloc(1024);
+      output[i] = malloc(sizeof(char) * strlen(line_p));
       strcpy(output[i++], line_p);
     }
     output[i] = '\0';
