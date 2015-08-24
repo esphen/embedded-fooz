@@ -66,15 +66,15 @@ void draw_box(int width, int height, int x, int y, char *score, char *header) {
   get_figlet_digit(score, asciiArt);
 
   // Print lines of ascii art
-  if(asciiArt != NULL) {
-  int i = 0;
-  char *string;
-  while ((string = asciiArt[i++]) != '\0') {
-    int xPos = (width / 2) - (int) strlen(string) / 2;
-    mvwaddstr(draw_window, i + offset + 1, xPos, string);
-    free(string);
+  if (asciiArt != NULL) {
+    int i = 0;
+    char *string;
+    while ((string = asciiArt[i++]) != '\0') {
+      int xPos = (width / 2) - (int) strlen(string) / 2;
+      mvwaddstr(draw_window, i + offset + 1, xPos, string);
+      free(string);
+    }
   }
-}
 
   wborder(draw_window, '|', '|', '-', '-', '+', '+', '+', '+');
   touchwin(stdscr);
