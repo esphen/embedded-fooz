@@ -6,13 +6,9 @@
 # Fetch globals
 source $(dirname $0)/variables.sh
 source $DIR/functions.sh
-source $DIR/lib/simple_curses.sh
 
 # Fetch gpio logic
 source $DIR/io.sh
-
-# Fetch scores in file
-get_scores
 
 # Continously checks io for input
 function start_io_loop {

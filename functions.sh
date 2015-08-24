@@ -64,7 +64,7 @@ function error_log {
 # Also send error log to error_log and discard stout
 function play_cheer {
   debug_log "Playing cheer"
-  play $DIR/lib/yay.ogg 2>&1 > /dev/null | error_log &
+  play -q $DIR/lib/yay.ogg 2> >(error_log) &
 }
 
 # Get scores from scorefile

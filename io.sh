@@ -19,7 +19,7 @@ function check_input {
       set_score $1 $NEW_SCORE
       main_log "$1 player is set to $NEW_SCORE"
 
-      #play_cheer
+      play_cheer
 
       if [[ $NEW_SCORE -ge $WIN_SCORE ]]
       then
