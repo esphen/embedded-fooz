@@ -1,6 +1,6 @@
 ## Development
 
-The view is written in C and has the following requirements: 
+The view is written in C and has the following requirements:
 ```
 cmake (>=3.0)
 libncurses5-dev (ncurses-devel on red hat)
@@ -26,3 +26,7 @@ The requirements for the bash script is:
 wiringPi
 play (from SoX)
 ```
+
+#### Logging
+After the main executable `embedded-fooz.sh` is run, a folder called logs will be created. It will contain three logfiles of increasing severity. These are appended to by the bash script, and stderr from the C files.
+
